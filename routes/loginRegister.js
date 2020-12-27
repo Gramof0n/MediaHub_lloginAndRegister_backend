@@ -3,6 +3,7 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
 
+const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 //REGISTER A NEW USER
@@ -48,7 +49,12 @@ router.post('/login', (req, res, next) => {
                     if (err) {
                         return res.status(401).json({ status: "wrong", message: "Authenitication failed" });
                     }
+
                     if (response) {
+                        jwt.sign({
+                            isAdmin: user.isAdmin,
+                            id: user._id
+                        });
                         return res.json({ status: "ok", message: "Logged in" });
                     } else {
                         return res.status(401).json({ status: "wrong", message: "Authenitication failed" });
