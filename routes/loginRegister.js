@@ -51,11 +51,18 @@ router.post('/login', (req, res, next) => {
                     }
 
                     if (response) {
-                        jwt.sign({
-                            isAdmin: user.isAdmin,
-                            id: user._id
-                        });
-                        return res.json({ status: "ok", message: "Logged in" });
+                        const token = jwt.sign(
+                            {
+                                isAdmin: user.isAdmin,
+                                id: user._id,
+                                username: user.username
+                            },
+                            process.env.JWT_KEY,
+                            {
+                                expiresIn: "1h"
+                            }
+                        );
+                        return res.json({ status: "ok", message: "Logged in", token: token });
                     } else {
                         return res.status(401).json({ status: "wrong", message: "Authenitication failed" });
                     }
